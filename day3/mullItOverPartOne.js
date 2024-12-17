@@ -1,4 +1,4 @@
-import { sanitizeData } from "./sanitizeData.js";
+import { sanitizeData } from "./sanitizeDataPartOne.js";
 
 function getMultiplicationsAddition(data) {
   const multiplications = sanitizeData(data);
