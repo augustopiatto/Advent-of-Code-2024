@@ -1,42 +1,34 @@
 import { sanitizeData } from "./sanitizeData.js";
 
 function checkIfReportIsSafe(report) {
-  const isOrdered = (arr, type) =>
-    arr.every((num, index) => {
-      if (!arr[index + 1]) return true;
-      const diff = arr[index + 1] - num;
-      if (type === "increasing") return diff > 0 && diff <= 3;
-      if (type === "decreasing") return diff < 0 && diff >= -3;
-      return false;
-    });
-
-  if (isOrdered(report, "increasing") || isOrdered(report, "decreasing")) {
-    return true;
-  }
-
-  for (let i = 0; i < report.length; i++) {
-    const modifiedReport = report.slice(0, i).concat(report.slice(i + 1));
-    if (
-      isOrdered(modifiedReport, "increasing") ||
-      isOrdered(modifiedReport, "decreasing")
-    ) {
-      return true;
+  let type = null;
+  const isSafe = report.every((number, index) => {
+    if (report[index + 1]) {
+      if (number > report[index + 1]) {
+        if (type === "increasing" || number - report[index + 1] > 3)
+          return false;
+        type = "decreasing";
+      } else if (number < report[index + 1]) {
+        if (type === "decreasing" || report[index + 1] - number > 3) {
+          return false;
+        }
+        type = "increasing";
+      } else {
+        return false;
+      }
     }
-  }
-
-  return false;
+    return true;
+  });
+  return isSafe;
 }
 
 function getSafeReports() {
   const reports = sanitizeData();
-
   const totalSafeReports = reports.reduce((acc, report) => {
     const isSafe = checkIfReportIsSafe(report);
-
     if (isSafe) acc++;
     return acc;
   }, 0);
-
   return totalSafeReports;
 }
 
